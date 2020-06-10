@@ -28,9 +28,13 @@ module.exports = {
       user : 'root',
       host : '47.96.178.26',
       ref  : 'origin/master',
-      repo : 'git@github.com:repo.git',
-      path : '/var/www/production',
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
+      repo : 'git@github.com:farmer-zc/server.git',
+      path : '/usr/local/myProject',
+      ssh_options: "StrictHostKeyChecking=no",
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
+      "evn": {
+        "NODE_ENV": "production"
+      }
     }
   }
 };
