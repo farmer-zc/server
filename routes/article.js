@@ -6,14 +6,14 @@ const querySql = require('../db/index')
 router.post('/add', async(req, res, next) => {
   let {title,content} = req.body
   if(!title || !content) {
-    res.send({code:-1, message:'接口参数不正确',data:null})
+    res.send({code:-1, message:'接口参数不正确', data:null})
   } else {
      let {username} = req.user
     try {
       let result = await querySql('select id from user where username = ?',[username])
       let user_id = result[0].id
       await querySql('insert into article(title,content,user_id,create_time) values(?,?,?,NOW())',[title,content,user_id])
-      res.send({code:0,msg:'新增成功',data:null})
+      res.send({code: 200, message:'新增成功', data:null})
     }catch(e){
       console.log(e)
       next(e)
@@ -27,7 +27,7 @@ router.get('/allList', async(req, res, next) => {
   try {
     let sql = 'select id,title,content,DATE_FORMAT(create_time,"%Y-%m-%d %H:%i:%s") AS create_time from article'
     let result = await querySql(sql)
-    res.send({code:0,msg:'获取成功',data:result})
+    res.send({code:200, message:'获取成功',data:result})
   }catch(e){
     console.log(e)
     next(e)
@@ -43,7 +43,7 @@ router.get('/myList', async(req, res, next) => {
     let user_id = user[0].id
     let sql = 'select id,title,content,DATE_FORMAT(create_time,"%Y-%m-%d %H:%i:%s") AS create_time from article where user_id = ?'
     let result = await querySql(sql,[user_id])
-    res.send({code:0,msg:'获取成功',data:result})
+    res.send({code:0, message:'获取成功', data:result})
   }catch(e){
     console.log(e)
     next(e)
@@ -56,7 +56,7 @@ router.get('/detail', async(req, res, next) => {
   try {
     let sql = 'select id,title,content,DATE_FORMAT(create_time,"%Y-%m-%d %H:%i:%s") AS create_time from article where id = ?'
     let result = await querySql(sql,[article_id])
-    res.send({code:0,msg:'获取成功',data:result[0]})
+    res.send({code:200, message:'获取成功',data:result[0]})
   }catch(e){
     console.log(e)
     next(e)
@@ -73,7 +73,7 @@ router.post('/update', async(req, res, next) => {
     let user_id = user[0].id
     let sql = 'update article set title = ?,content = ? where id = ? and user_id = ?'
     let result = await querySql(sql,[title,content,article_id,user_id])
-    res.send({code:0,msg:'更新成功',data:null})
+    res.send({code:200, message:'更新成功',data:null})
   }catch(e){
     console.log(e)
     next(e)
@@ -90,7 +90,7 @@ router.post('/delete', async(req, res, next) => {
     let user_id = user[0].id
     let sql = 'delete from article where id = ? and user_id = ?'
     let result = await querySql(sql,[article_id,user_id])
-    res.send({code:0,msg:'删除成功',data:null})
+    res.send({code:200, message:'删除成功',data:null})
   }catch(e){
     console.log(e)
     next(e)

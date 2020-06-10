@@ -14,9 +14,9 @@ router.post('/register', async(req, res, next) => {
     if(!user || user.length === 0){
       password = md5(`${password}${PWD_SALT}`)
       await querySql('insert into user(username,password,nickname) value(?,?,?)',[username,password,nickname])
-      res.send({code:200, success: true, message:'注册成功'})
+      res.send({code:200, message:'注册成功'})
     }else{
-      res.send({code:-1, success: false, message:'该账号已注册'})
+      res.send({code:-1, message:'该账号已注册'})
     }
   }catch(e){
     console.log(e)
@@ -30,15 +30,15 @@ router.post('/login',async(req,res,next) => {
   try {
     let user = await querySql('select * from user where username = ?',[username])
       if(!user || user.length === 0){
-        res.send({code:-1, success:false, message:'该账号不存在'})
+        res.send({code:-1, message:'该账号不存在'})
       }else{
         password = md5(`${password}${PWD_SALT}`)
         let result = await querySql('select username,nickname,head_img from user where username = ? and password = ?',[username,password])
         if(!result || result.length === 0){
-          res.send({code:-1, success: false, message:'账号或者密码不正确'})
+          res.send({code:-1, message:'账号或者密码不正确'})
         }else{
           let token = jwt.sign({username},PRIVATE_KEY,{expiresIn:EXPIRESD})
-          res.send({code:200, success: true, message:'登录成功',token:token, userInfo:result[0]})
+          res.send({code:200, message:'登录成功', token:token, userInfo:result[0]})
         }      
       }
   }catch(e){
@@ -52,7 +52,7 @@ router.get('/info',async(req,res,next) => {
   let {username} = req.user
   try {
     let userinfo = await querySql('select username,nickname,head_img from user where username = ?',[username])
-    res.send({code:200, success: true, message:'成功',data:userinfo[0]})
+    res.send({code:200, message:'成功',data:userinfo[0]})
   }catch(e){
     console.log(e)
     next(e)
@@ -64,7 +64,7 @@ router.post('/upload',upload.single('head_img'),async(req,res,next) => {
   console.log(req.file)
   let imgPath = req.file.path.split('public')[1]
   let imgUrl = 'http://127.0.0.1:3000'+imgPath
-  res.send({code:0, message:'上传成功', data:imgUrl})
+  res.send({code:200, message:'上传成功', data:imgUrl})
 })
 
 //用户信息更新接口
@@ -73,7 +73,7 @@ router.post('/updateUser',async(req,res,next) => {
   let {username} = req.user
   try {
     let result = await querySql('update user set nickname = ?,head_img = ? where username = ?',[nickname,head_img,username])
-    res.send({code: 200, success: true, message:'更新成功',data:null})
+    res.send({code: 200, message:'更新成功',data:null})
   }catch(e){
     console.log(e)
     next(e)
